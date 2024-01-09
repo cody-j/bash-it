@@ -13,7 +13,20 @@ case $TERM in
 esac
 
 function prompt_command() {
-	PS1="${TITLEBAR}${orange}${reset_color}${bold_yellow}${bold_yellow}\W ${bold_purple}\[$(scm_prompt_info)\]\n${normal}>${normal} "
+  split_char='/'
+  current_full=`pwd`
+  current_base="${current_full##*${split_char}}"
+  parent_full=$(dirname $current_full)
+
+  if [ $parent_full == '/' ] && [ `pwd` == '/' ]; then
+    parent="${bold_yellow}/"
+  elif [ $parent_full == '/' ]; then
+    parent="/${bold_yellow}$current_base"
+  else
+    parent_base="${parent_full##*${split_char}}"
+    parent="${reset_color}$parent_base/${bold_yellow}$current_base"
+  fi
+	PS1="${TITLEBAR}${orange}${reset_color}$parent ${bold_blue}\[$(scm_prompt_info)\]${normal} \n> "
 }
 
 # scm themeing
